@@ -1,5 +1,6 @@
 mod dec4;
+mod dec5;
 
 fn main() {
-    dec4::dec4_2()
+    dec5::dec5_2()
 }

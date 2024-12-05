@@ -2,9 +2,9 @@ use std::error::Error;
 use std::fs::read_to_string;
 use crate::dec4;
 
-type Result<T> = std::result::Result<T, Box<dyn Error>>;
+pub(crate) type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
-fn read_lines(filename: &str) -> Result<Vec<String>> {
+pub(crate) fn read_lines(filename: &str) -> Result<Vec<String>> {
     let mut result = Vec::new();
     let contents = read_to_string(filename)?;
 
@@ -112,6 +112,7 @@ pub(crate) fn dec4() {
     println!("{:?}", res);
 }
 
+#[allow(dead_code)]
 pub(crate) fn dec4_2() {
     let matrix = dec4::read_matrix("dec4.in.txt").expect("Could not load input.");
     //println!("{:?}", matrix);
