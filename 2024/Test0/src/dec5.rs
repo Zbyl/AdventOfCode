@@ -70,20 +70,47 @@ fn is_update_ok(update: &Vec<i32>, rule_map: &HashMap<i32, HashSet<i32>>) -> boo
 }
 
 fn fix_update(update: &Vec<i32>, rule_map: &HashMap<i32, HashSet<i32>>) -> Vec<i32> {
-    let mut prevs = Vec::new();
-    let mut prevsH = HashSet::new();
     let empty = HashSet::new();
-    for a in update {
-        let must_follow = rule_map.get(a).unwrap_or(&empty);
-        let mismatches = must_follow.intersection(&prevsH).collect()1``
-        if mismatches.is_some() {
-            println!("Update {:?} number {} must be followed by {:?} but some are in previous {:?}", update, a, must_follow, prevs);
-            return false;
+    let mut visited = HashSet::new();
+    let updateH = update.iter().cloned().collect::<HashSet<_>>();
+    let mut path = Vec::new();
+    let mut order = Vec::new();
+
+    for top_node in update {
+        if !visited.contains(top_node) {
+            path.push(*top_node);
+            visited.insert(*top_node);
+            println!("top {top_node}");
         }
-        prevs.push(*a);
-        prevsH.insert(*a);
+
+        while !path.is_empty() {
+            let node = *path.last().unwrap();
+
+            let mut added = false;
+            let must_follow = rule_map.get(&node).unwrap_or(&empty);
+            let children = must_follow.intersection(&updateH).collect_vec();
+            for child in children {
+                if !visited.contains(&child) {
+                    path.push(*child);
+                    visited.insert(*child);
+                    added = true;
+                    print!("{child} ");
+                    break;
+                }
+            }
+
+            if !added {
+                path.pop();
+                order.push(node);
+                println!("-> {node}");
+            } else {
+                println!("");
+            }
+        }
     }
-    true
+
+    order.reverse();
+    order
 }
 
 
@@ -108,12 +135,13 @@ fn process_updates2(input: &Dec5Input, rule_map: &HashMap<i32, HashSet<i32>>) ->
             continue;
         }
 
-        let fixed_update = fix_update(update, rule_map);
-
         if update.len() % 2 == 0 {
             panic!("Update {:?} is not odd length.", update);
         }
-        result += update[update.len() / 2];
+        let fixed_update = fix_update(update, rule_map);
+        println!("Fixed: {:?}", fixed_update);
+
+        result += fixed_update[fixed_update.len() / 2];
     }
     return result;
 }
