@@ -1,4 +1,5 @@
 use std::cmp::PartialEq;
+use std::collections::HashSet;
 use crate::dec4;
 use crate::dec4::{Matrix, Vec2};
 
@@ -20,7 +21,7 @@ fn make_maze(mut matrix: Matrix) -> Maze {
 }
 
 
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 enum Direction {
     Up,
     Right,
@@ -50,23 +51,33 @@ impl Direction {
     }
 }
 
-fn walk_maze(matrix: &mut Matrix, start: Vec2, start_dir: Direction) -> () {
+fn walk_maze(matrix: &mut Matrix, start: Vec2, start_dir: Direction, mark: bool) -> bool {
     match matrix.get(start) {
         None => { panic!("Start position {start:?} not inside maze: {matrix:?}"); }
         Some(x) if x != '.' => { panic!("Start position {start:?} not on empty block, but on {x} inside maze: {matrix:?}"); }
         _ => {}
     }
 
+    // Remember that we visited given position, going in the given direction.
+    // If we'll get to that again, that means we're in a cycle.
+    let mut visited = HashSet::<(Vec2, Direction)>::new();
+
     let mut pos = start;
     let mut cur_dir = start_dir;
     loop {
-        if matrix.count('.') == 0 {
-            panic!("Matrix full, escape impossible: {matrix:?}");
-        }
         if !matrix.contains(pos) {
-            return;
+            return true; // Escaped from the maze.
         }
-        matrix.put(pos, 'X');
+        if mark {
+            matrix.put(pos, 'X');
+        }
+
+        if visited.contains(&(pos, cur_dir)) {
+            // We're in a cycle.
+            return false;
+        }
+        visited.insert((pos, cur_dir));
+
         let save_dir = cur_dir;
         loop {
             let next_pos = pos + cur_dir.dir();
@@ -77,20 +88,54 @@ fn walk_maze(matrix: &mut Matrix, start: Vec2, start_dir: Direction) -> () {
             }
             cur_dir = cur_dir.turn();
             if cur_dir == save_dir {
-                panic!("Dude is trapped at: {:?}", pos);
+                println!("Dude is trapped at: {:?}", pos);
+                return false;
             }
         }
     }
+}
+
+fn try_trap(matrix: &mut Matrix, start: Vec2, start_dir: Direction) -> i32 {
+    let mut result = 0;
+    for x in 0 .. matrix.width {
+        for y in 0 .. matrix.height {
+            print!("{x} {y}");
+            let pos = Vec2::new(x as i32, y as i32);
+            if pos == start { println!(" start"); continue; }
+            let c = matrix.get(pos).unwrap();
+            if c != '.' { println!(" wall"); continue; }
+            matrix.put(pos, '#');
+            if walk_maze(matrix, start, start_dir, false) == false {
+                result += 1;
+                println!(" cycle");
+            } else {
+                println!(" ."); // escaped
+            }
+            matrix.put(pos, '.');
+        }
+    }
+    result
 }
 
 #[allow(dead_code)]
 pub(crate) fn dec6() {
     let matrix = dec4::read_matrix("dec6.in.txt").expect("Could not load input.");
     let mut maze = make_maze(matrix);
-    walk_maze(&mut maze.matrix, maze.start, Direction::Up);
+    walk_maze(&mut maze.matrix, maze.start, Direction::Up, true);
     let result = maze.matrix.count('X');
     println!("{}", result);
     println!("{}", maze.matrix);
     println!("");
+    println!("{}", result);
+}
+
+#[allow(dead_code)]
+pub(crate) fn dec6_2() {
+    let matrix = dec4::read_matrix("dec6.in.txt").expect("Could not load input.");
+    let mut maze = make_maze(matrix);
+    let result = try_trap(&mut maze.matrix, maze.start, Direction::Up);
+    //println!("{}", result);
+    //println!("{}", maze.matrix);
+    //println!("");
     println!("{}", result);
 }

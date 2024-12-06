@@ -16,7 +16,7 @@ pub(crate) fn read_lines(filename: &str) -> Result<Vec<String>> {
     Ok(result)
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct Vec2 {
     pub x: i32,
     pub y: i32,
