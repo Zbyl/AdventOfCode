@@ -72,7 +72,7 @@ fn is_update_ok(update: &Vec<i32>, rule_map: &HashMap<i32, HashSet<i32>>) -> boo
 fn fix_update(update: &Vec<i32>, rule_map: &HashMap<i32, HashSet<i32>>) -> Vec<i32> {
     let empty = HashSet::new();
     let mut visited = HashSet::new();
-    let updateH = update.iter().cloned().collect::<HashSet<_>>();
+    let update_h = update.iter().cloned().collect::<HashSet<_>>();
     let mut path = Vec::new();
     let mut order = Vec::new();
 
@@ -88,7 +88,7 @@ fn fix_update(update: &Vec<i32>, rule_map: &HashMap<i32, HashSet<i32>>) -> Vec<i
 
             let mut added = false;
             let must_follow = rule_map.get(&node).unwrap_or(&empty);
-            let children = must_follow.intersection(&updateH).collect_vec();
+            let children = must_follow.intersection(&update_h).collect_vec();
             for child in children {
                 if !visited.contains(&child) {
                     path.push(*child);
