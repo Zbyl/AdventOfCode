@@ -1,7 +1,6 @@
 use std::cmp::PartialEq;
 use std::collections::HashSet;
-use crate::dec4;
-use crate::dec4::{Matrix, Vec2};
+use crate::helpers::{read_matrix, Matrix, Vec2};
 
 #[derive(Debug)]
 pub(crate) struct Maze {
@@ -119,7 +118,7 @@ fn try_trap(matrix: &mut Matrix, start: Vec2, start_dir: Direction) -> i32 {
 
 #[allow(dead_code)]
 pub(crate) fn dec6() {
-    let matrix = dec4::read_matrix("dec6.in.txt").expect("Could not load input.");
+    let matrix = read_matrix("dec6.ex.txt").expect("Could not load input.");
     let mut maze = make_maze(matrix);
     walk_maze(&mut maze.matrix, maze.start, Direction::Up, true);
     let result = maze.matrix.count('X');
@@ -131,7 +130,7 @@ pub(crate) fn dec6() {
 
 #[allow(dead_code)]
 pub(crate) fn dec6_2() {
-    let matrix = dec4::read_matrix("dec6.in.txt").expect("Could not load input.");
+    let matrix = read_matrix("dec6.ex.txt").expect("Could not load input.");
     let mut maze = make_maze(matrix);
     let result = try_trap(&mut maze.matrix, maze.start, Direction::Up);
     //println!("{}", result);

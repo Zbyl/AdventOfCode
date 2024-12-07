@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use regex::Regex;
-use crate::dec4::{read_lines};
 use std::collections::{HashMap, HashSet};
+use crate::helpers::read_lines;
 
 #[derive(Debug)]
 pub(crate) struct Dec5Input {
@@ -9,7 +9,7 @@ pub(crate) struct Dec5Input {
     updates: Vec<Vec<i32>>,
 }
 
-pub(crate) fn read_dec5_input(filename: &str) -> crate::dec4::Result<Dec5Input> {
+pub(crate) fn read_dec5_input(filename: &str) -> crate::helpers::Result<Dec5Input> {
     let lines = read_lines(filename)?;
 
     let mut input = Dec5Input { rules: Vec::new(), updates: Vec::new() };
