@@ -35,6 +35,30 @@ impl ops::Add<Vec2> for Vec2 {
     }
 }
 
+impl ops::Sub<Vec2> for Vec2 {
+    type Output = Vec2;
+
+    fn sub(self, _rhs: Vec2) -> Vec2 {
+        Vec2::new(self.x - _rhs.x, self.y - _rhs.y)
+    }
+}
+
+impl ops::Mul<i32> for Vec2 {
+    type Output = Vec2;
+
+    fn mul(self, _rhs: i32) -> Vec2 {
+        Vec2::new(self.x * _rhs, self.y * _rhs)
+    }
+}
+
+impl ops::Mul<Vec2> for i32 {
+    type Output = Vec2;
+
+    fn mul(self, _rhs: Vec2) -> Vec2 {
+        Vec2::new(self * _rhs.x, self * _rhs.y)
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct Matrix {
     pub(crate) width: usize,
