@@ -15,6 +15,18 @@ pub(crate) fn read_lines(filename: &str) -> Result<Vec<String>> {
     Ok(result)
 }
 
+pub(crate) fn read_line(filename: &str) -> Result<String> {
+    let result = read_lines(filename)?;
+    if result.is_empty() {
+        return Err(From::from(format!("No lines in file: {}", filename)));
+    }
+    if result.len() > 1 {
+        return Err(From::from(format!("Expected only one line in file {}, but got: {}", filename, result.len())));
+    }
+
+    Ok(result.first().unwrap().clone())
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct Vec2 {
     pub x: i32,
