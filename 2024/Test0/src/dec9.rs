@@ -80,24 +80,24 @@ fn defrag_checksum2(input: &str) -> i64 {
         }
     }
 
-    println!("{:?}", block_chunks);
-    println!("{:?}", files_by_size);
+    //println!("{:?}", block_chunks);
+    //println!("{:?}", files_by_size);
 
     let mut outed_files: HashSet<i32> = HashSet::new();
     let mut checksum = 0i64;
     let mut disk_pos = 0;
-    let mut dbg: String = String::from("");
+    //let mut dbg: String = String::from("");
     let mut write = | fidx: i32, blocks: i32 | {
         for _i in 0..blocks {
             if fidx != -1 {
                 checksum += (disk_pos * fidx) as i64;
-                dbg.push(('0' as i32 + fidx) as u8 as char);
+                //dbg.push(('0' as i32 + fidx) as u8 as char);
             } else {
-                dbg.push('.');
+                //dbg.push('.');
             }
             disk_pos += 1;
         }
-        println!("{}", dbg);
+        //println!("{}", dbg);
     };
     for (idx, num_blocks) in block_chunks.iter().enumerate() {
         let on_empty = (idx & 1 != 0) || outed_files.contains(&((idx / 2) as i32));
@@ -111,30 +111,46 @@ fn defrag_checksum2(input: &str) -> i64 {
 
         // Fill empty with last files that would fit into this empty.
         let mut blocks_left = *num_blocks;
-        'outer: loop {
+        loop {
             if blocks_left <= 0 { break; }
 
-            for cur_blocks in (1..blocks_left + 1).rev() {
+            let mut best_fidx = -1;
+            let mut best_size = -1;
+            for cur_blocks in 1..blocks_left + 1 {
                 let candidates = files_by_size.get_mut(&cur_blocks);
                 if candidates.is_none() {
                     continue;
                 }
 
                 let candidates = candidates.unwrap();
-                if candidates.is_empty() {
-                    files_by_size.remove(&cur_blocks);
-                    continue;
+                loop {
+                    if candidates.is_empty() {
+                        files_by_size.remove(&cur_blocks);
+                        break;
+                    }
+
+                    let fidx = *candidates.last().unwrap();
+                    if outed_files.contains(&fidx) {
+                        candidates.pop();
+                        continue;
+                    }
+
+                    if fidx > best_fidx {
+                        best_fidx = fidx;
+                        best_size = cur_blocks;
+                    }
+                    break;
                 }
-
-                let fidx = candidates.pop().unwrap();
-                write(fidx, cur_blocks);
-                outed_files.insert(fidx);
-                blocks_left -= cur_blocks;
-
-                continue 'outer;
             }
 
-            break; // No candidates found.
+            if best_fidx == -1 {
+                break; // No candidates found.
+            }
+
+            files_by_size.get_mut(&best_size).unwrap().pop();
+            write(best_fidx, best_size);
+            outed_files.insert(best_fidx);
+            blocks_left -= best_size;
         }
 
         write(-1, blocks_left);
@@ -152,7 +168,7 @@ pub(crate) fn dec9() {
 
 #[allow(dead_code)]
 pub(crate) fn dec9_2() {
-    let mut input = read_line("dec9.ex.txt").expect("Could not load input.");
+    let mut input = read_line("dec9.in.txt").expect("Could not load input.");
     let result = defrag_checksum2(input.as_mut_str());
     println!("{:?}", result);
 }
