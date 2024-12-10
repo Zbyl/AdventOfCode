@@ -7,7 +7,8 @@ mod dec7;
 mod helpers;
 mod dec8;
 mod dec9;
+mod dec10;
 
 fn main() {
-    dec9::dec9_2()
+    dec10::dec10()
 }

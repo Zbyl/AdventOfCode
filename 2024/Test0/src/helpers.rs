@@ -99,6 +99,13 @@ impl Matrix {
         Some(self.data[pos.y as usize].as_bytes()[pos.x as usize].into())
     }
 
+    pub(crate) fn get_int(&self, pos: Vec2) -> Option<i32> {
+        if let Some(c) = self.get(pos) {
+            return Some(c.to_digit(10).unwrap() as i32);
+        }
+        None
+    }
+
     pub(crate) fn put(&mut self, pos: Vec2, c: char) {
         if !self.contains(pos) {
             panic!("{:?} is out of bounds of {}", pos, self);
