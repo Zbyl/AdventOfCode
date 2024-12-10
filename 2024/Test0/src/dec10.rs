@@ -43,7 +43,56 @@ fn trail_score(matrix: &Matrix, start_pos: Vec2) -> i32 {
     score
 }
 
-fn compute_result(matrix: &Matrix) -> i32 {
+fn trail_rating(matrix: &Matrix, start_pos: Vec2) -> i32 {
+    let mut path: Vec<Vec2> = Vec::new();
+    let mut path_set: HashSet<Vec2> = HashSet::new();
+    let mut score = 0;
+
+    let dirs = vec![ Vec2::new(0, -1), Vec2::new(1, 0), Vec2::new(0, 1), Vec2::new(-1, 0), ];
+
+    path.push(start_pos);
+
+    loop {
+        if path.is_empty() {
+            break;
+        }
+        let cur_pos = *path.last().unwrap();
+        if path_set.contains(&cur_pos) {
+            path_set.remove(&cur_pos);
+            path.pop();
+            continue;
+        }
+        path_set.insert(cur_pos);
+
+        let cur_height = matrix.get_int(cur_pos).unwrap();
+        if cur_height == 9 {
+            score += 1;
+            continue;
+        }
+
+        for dir in dirs.iter() {
+            let next_pos = cur_pos + *dir;
+            if !matrix.contains(next_pos) {
+                continue;
+            }
+
+            if path_set.contains(&next_pos) {
+                continue;
+            }
+
+            let next_height = matrix.get_int(next_pos).unwrap();
+            if next_height != cur_height + 1 {
+                continue;
+            }
+            path.push(next_pos);
+        }
+    }
+
+    //println!("{}", score);
+    score
+}
+
+fn compute_result(matrix: &Matrix, rating: bool) -> i32 {
     let mut result = 0;
     for y in 0..matrix.height {
         for x in 0..matrix.width {
@@ -52,7 +101,11 @@ fn compute_result(matrix: &Matrix) -> i32 {
             if val != 0 {
                 continue;
             }
-            result += trail_score(matrix, pos);
+            if rating {
+                result += trail_rating(matrix, pos);
+            } else {
+                result += trail_score(matrix, pos);
+            }
         }
     }
     result
@@ -61,6 +114,13 @@ fn compute_result(matrix: &Matrix) -> i32 {
 #[allow(dead_code)]
 pub(crate) fn dec10() {
     let matrix = read_matrix("dec10.in.txt").expect("Could not load input.");
-    let result = compute_result(&matrix);
+    let result = compute_result(&matrix, false);
+    println!("{:?}", result);
+}
+
+#[allow(dead_code)]
+pub(crate) fn dec10_2() {
+    let matrix = read_matrix("dec10.in.txt").expect("Could not load input.");
+    let result = compute_result(&matrix, true);
     println!("{:?}", result);
 }

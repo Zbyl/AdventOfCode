@@ -10,5 +10,5 @@ mod dec9;
 mod dec10;
 
 fn main() {
-    dec10::dec10()
+    dec10::dec10_2()
 }
