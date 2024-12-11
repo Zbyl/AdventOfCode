@@ -1,6 +1,10 @@
 use std::error::Error;
 use std::fs::read_to_string;
 use std::{fmt, ops};
+use std::any::type_name;
+use std::fmt::Debug;
+use std::str::FromStr;
+use itertools::Itertools;
 
 pub(crate) type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -25,6 +29,15 @@ pub(crate) fn read_line(filename: &str) -> Result<String> {
     }
 
     Ok(result.first().unwrap().clone())
+}
+
+pub(crate) fn parse_nums<T: FromStr>(content: &str) -> Vec<T>
+    where <T as FromStr>::Err: Debug
+{
+    let pieces = content.split(' ')
+        .map(|s| s.parse::<T>().expect(format!("Cannot parse {} as {}.", s, type_name::<T>()).as_str()))
+        .collect_vec();
+    pieces
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
