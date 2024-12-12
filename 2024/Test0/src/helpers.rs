@@ -46,9 +46,30 @@ pub(crate) struct Vec2 {
     pub y: i32,
 }
 
+#[allow(dead_code)]
 impl Vec2 {
-    pub fn new(x: i32, y: i32) -> Self {
+    pub const fn new(x: i32, y: i32) -> Self {
         Self { x, y }
+    }
+    pub const fn zero() -> Self { Self { x: 0, y: 0 } }
+    pub const fn up() -> Self { Self { x: 0, y: -1 } }
+    pub const fn down() -> Self { Self { x: 0, y: 1 } }
+    pub const fn left() -> Self { Self { x: -1, y: 0 } }
+    pub const fn right() -> Self { Self { x: 1, y: 0 } }
+
+    pub fn rot_cw(&self) -> Vec2 {
+        Vec2::new(-self.y, self.x)
+    }
+    pub fn rot_ccw(&self) -> Vec2 {
+        Vec2::new(self.y, -self.x)
+    }
+}
+
+impl ops::Neg for Vec2 {
+    type Output = Vec2;
+
+    fn neg(self) -> Vec2 {
+        Vec2::new(-self.x, -self.y)
     }
 }
 
