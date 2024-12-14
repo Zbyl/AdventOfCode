@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 regex = "1.11.1"
 itertools = "0.13.0"
+num = "0.4.3"
+bytemuck = "1.20.0"
+lazy_static = "1.5.0"

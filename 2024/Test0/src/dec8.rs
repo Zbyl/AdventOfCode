@@ -36,7 +36,7 @@ fn process_antennas(matrix: &Matrix, antennas: &HashMap<char, HashSet<Vec2>>, li
                 loop {
                     let mut had = false;
                     let a1 = pos1 + delta * idx;
-                    let a2 = pos0 - idx * delta;
+                    let a2 = pos0 - delta * idx;
                     if matrix.contains(a1) {
                         results.insert(a1);
                         had = true;
