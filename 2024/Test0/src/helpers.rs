@@ -116,6 +116,14 @@ impl<T: Signed + Copy> ops::Mul<T> for Vec2<T> {
         Self::new(self.x * _rhs, self.y * _rhs)
     }
 }
+
+impl<T: Signed + Copy> ops::Div<T> for Vec2<T> {
+    type Output = Self;
+
+    fn div(self, _rhs: T) -> Self {
+        Self::new(self.x / _rhs, self.y / _rhs)
+    }
+}
 /*
 impl<T> ops::Mul<Vec2<T>> for T
 where
@@ -146,6 +154,13 @@ impl<T: Signed + Copy + ops::MulAssign> ops::MulAssign<T> for Vec2<T> {
     fn mul_assign(&mut self, rhs: T) {
         self.x *= rhs;
         self.y *= rhs;
+    }
+}
+
+impl<T: Signed + Copy + ops::DivAssign> ops::DivAssign<T> for Vec2<T> {
+    fn div_assign(&mut self, rhs: T) {
+        self.x /= rhs;
+        self.y /= rhs;
     }
 }
 
