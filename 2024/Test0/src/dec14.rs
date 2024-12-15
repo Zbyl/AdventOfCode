@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::thread;
 use std::time;
 use regex::Regex;

@@ -2,11 +2,12 @@ use std::error::Error;
 use std::fs::read_to_string;
 use std::{fmt, ops};
 use std::any::type_name;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::str::FromStr;
 use itertools::Itertools;
 use num::Signed;
-
+use crate::dec6::Maze;
 
 pub(crate) type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -223,6 +224,10 @@ impl Matrix {
 
 pub(crate) fn read_matrix(filename: &str) -> Result<Matrix> {
     let lines = read_lines(filename)?;
+    read_matrix_from_lines(lines)
+}
+
+pub(crate) fn read_matrix_from_lines(lines: Vec<String>) -> Result<Matrix> {
     if lines.is_empty() {
         return Ok(Matrix { width: 0, height: 0, data: vec![] })
     }
@@ -235,4 +240,19 @@ pub(crate) fn read_matrix(filename: &str) -> Result<Matrix> {
     }
 
     Ok(Matrix { width: line_length, height: lines.len(), data: lines })
+}
+
+pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
+    for y in 0..matrix.height {
+        for x in 0..matrix.width {
+            let pos = Vec2::new(x as i32, y as i32);
+            let val = if let Some(&c) = overrides.get(&pos) { c } else { matrix.get(pos).unwrap() };
+            print!("{}", val);
+        }
+        println!();
+    }
+}
+
+pub fn print_maze(maze: &Maze) -> () {
+    print_matrix(&maze.matrix, &hashmap! { maze.start => '@' })
 }

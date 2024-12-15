@@ -3,14 +3,14 @@ use std::collections::HashSet;
 use crate::helpers::{read_matrix, Matrix, Vec2};
 
 #[derive(Debug)]
-pub(crate) struct Maze {
-    matrix: Matrix,
-    start: Vec2,
+pub struct Maze {
+    pub matrix: Matrix,
+    pub start: Vec2,
 }
 
-fn make_maze(mut matrix: Matrix) -> Maze {
+pub fn make_maze(mut matrix: Matrix, start_char: char) -> Maze {
     for (row_idx, row) in matrix.data.iter_mut().enumerate() {
-        if let Some(pos) = row.find('^') {
+        if let Some(pos) = row.find(start_char) {
             let start = Vec2::new(pos as i32, row_idx as i32);
             matrix.put(start, '.');
             return Maze { matrix: matrix, start: start };
@@ -119,7 +119,7 @@ fn try_trap(matrix: &mut Matrix, start: Vec2, start_dir: Direction) -> i32 {
 #[allow(dead_code)]
 pub(crate) fn dec6() {
     let matrix = read_matrix("dec6.ex.txt").expect("Could not load input.");
-    let mut maze = make_maze(matrix);
+    let mut maze = make_maze(matrix, '^');
     walk_maze(&mut maze.matrix, maze.start, Direction::Up, true);
     let result = maze.matrix.count('X');
     println!("{}", result);
@@ -131,7 +131,7 @@ pub(crate) fn dec6() {
 #[allow(dead_code)]
 pub(crate) fn dec6_2() {
     let matrix = read_matrix("dec6.ex.txt").expect("Could not load input.");
-    let mut maze = make_maze(matrix);
+    let mut maze = make_maze(matrix, '^');
     let result = try_trap(&mut maze.matrix, maze.start, Direction::Up);
     //println!("{}", result);
     //println!("{}", maze.matrix);

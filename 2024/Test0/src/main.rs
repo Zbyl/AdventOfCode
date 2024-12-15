@@ -1,5 +1,8 @@
 #![allow(unused_parens)]
 
+#[macro_use]
+extern crate maplit;
+
 mod dec4;
 mod dec5;
 mod dec6;
@@ -13,7 +16,8 @@ mod dec12;
 mod find_union;
 mod dec13;
 mod dec14;
+mod dec15;
 
 fn main() {
-    dec14::dec14_2()
+    dec15::dec15()
 }
