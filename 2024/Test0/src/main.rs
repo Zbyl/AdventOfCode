@@ -19,5 +19,5 @@ mod dec14;
 mod dec15;
 
 fn main() {
-    dec15::dec15()
+    dec15::dec15_2()
 }

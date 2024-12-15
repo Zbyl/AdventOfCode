@@ -103,6 +103,7 @@ fn compute_stuff2(inputs: &Vec<Input>, size: Vec2<i64>) -> i64 {
 }
 
 #[allow(dead_code)]
+#[allow(unused_variables)]
 pub(crate) fn dec14() {
     let lines = read_lines("dec14.in.txt").expect("Could not load input.");
     let mut inputs = parse_input(&lines).unwrap();
@@ -113,6 +114,7 @@ pub(crate) fn dec14() {
 }
 
 #[allow(dead_code)]
+#[allow(unused_variables)]
 pub(crate) fn dec14_2() {
     let lines = read_lines("dec14.in.txt").expect("Could not load input.");
     let inputs = parse_input(&lines).unwrap();

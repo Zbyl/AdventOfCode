@@ -242,6 +242,7 @@ pub(crate) fn read_matrix_from_lines(lines: Vec<String>) -> Result<Matrix> {
     Ok(Matrix { width: line_length, height: lines.len(), data: lines })
 }
 
+#[allow(dead_code)]
 pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
     for y in 0..matrix.height {
         for x in 0..matrix.width {
@@ -253,6 +254,7 @@ pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
     }
 }
 
-pub fn print_maze(maze: &Maze) -> () {
-    print_matrix(&maze.matrix, &hashmap! { maze.start => '@' })
+#[allow(dead_code)]
+pub fn print_maze(maze: &Maze, start_char: char) -> () {
+    print_matrix(&maze.matrix, &hashmap! { maze.start => start_char })
 }
