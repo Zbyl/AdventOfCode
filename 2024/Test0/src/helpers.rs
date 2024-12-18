@@ -186,6 +186,26 @@ impl fmt::Display for Matrix {
 }
 
 impl Matrix {
+    pub fn new(width: usize, height: usize, fill: char, walls: Option<char>) -> Self {
+        let mut matrix = Matrix {
+            width: width,
+            height: height,
+            data: vec![fill.to_string().repeat(width); height],
+        };
+
+        if let Some(wall) = walls {
+            for y in 0..height {
+                for x in 0..width {
+                    if (x == 0) || (x == width - 1) || (y == 0) || (y == height - 1) {
+                        matrix.put(Vec2::new(x as i32, y as i32), wall);
+                    }
+                }
+            }
+        }
+
+        matrix
+    }
+
     pub(crate) fn get(&self, pos: Vec2) -> Option<char> {
         if !self.contains(pos) {
             return None;
@@ -258,3 +278,23 @@ pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
 pub fn print_maze(maze: &Maze, start_char: char) -> () {
     print_matrix(&maze.matrix, &hashmap! { maze.start => start_char })
 }
+
+pub fn separate_by_blank(lines: &Vec<String>) -> (Vec<String>, Vec<String>) {
+    let mut s0: Vec<String> = Vec::new();
+    let mut s1: Vec<String> = Vec::new();
+    let mut first = true;
+    for line in lines {
+        if line.is_empty() {
+            first = false;
+            continue;
+        }
+        if first {
+            s0.push(line.clone());
+        } else {
+            s1.push(line.clone());
+        }
+    }
+
+    (s0, s1)
+}
+
