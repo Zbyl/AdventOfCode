@@ -17,7 +17,10 @@ mod find_union;
 mod dec13;
 mod dec14;
 mod dec15;
+mod dec16;
+mod dec17;
+mod dec18;
 
 fn main() {
-    dec15::dec15_2()
+    dec17::dec17_2()
 }

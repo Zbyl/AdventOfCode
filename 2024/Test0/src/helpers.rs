@@ -165,7 +165,7 @@ impl<T: Signed + Copy + ops::DivAssign> ops::DivAssign<T> for Vec2<T> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Matrix {
     pub(crate) width: usize,
     pub(crate) height: usize,

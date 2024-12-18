@@ -21,7 +21,7 @@ pub fn make_maze(mut matrix: Matrix, start_char: char) -> Maze {
 
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
-enum Direction {
+pub enum Direction {
     Up,
     Right,
     Down,
@@ -29,7 +29,7 @@ enum Direction {
 }
 
 impl Direction {
-    fn turn(&self) -> Self {
+    pub fn turn_cw(&self) -> Self {
         use Direction::*;
         match *self {
             Up => Right,
@@ -39,7 +39,17 @@ impl Direction {
         }
     }
 
-    fn dir(&self) -> Vec2 {
+    pub fn turn_ccw(&self) -> Self {
+        use Direction::*;
+        match *self {
+            Up => Left,
+            Left => Down,
+            Down => Right,
+            Right => Up,
+        }
+    }
+
+    pub fn dir(&self) -> Vec2 {
         use Direction::*;
         match *self {
             Up => return Vec2::new(0, -1),
@@ -85,7 +95,7 @@ fn walk_maze(matrix: &mut Matrix, start: Vec2, start_dir: Direction, mark: bool)
                 pos = next_pos;
                 break;
             }
-            cur_dir = cur_dir.turn();
+            cur_dir = cur_dir.turn_cw();
             if cur_dir == save_dir {
                 println!("Dude is trapped at: {:?}", pos);
                 return false;
