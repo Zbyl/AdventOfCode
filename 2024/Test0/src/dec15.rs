@@ -1,25 +1,7 @@
 use crate::dec6::{make_maze, Maze};
 #[allow(unused_imports)]
 use crate::helpers::{print_maze, read_lines, read_matrix_from_lines, Matrix, Vec2};
-
-fn separate(lines: Vec<String>) -> (Vec<String>, Vec<String>) {
-    let mut s0: Vec<String> = Vec::new();
-    let mut s1: Vec<String> = Vec::new();
-    let mut first = true;
-    for line in lines {
-        if line.is_empty() {
-            first = false;
-            continue;
-        }
-        if first {
-            s0.push(line);
-        } else {
-            s1.push(line);
-        }
-    }
-
-    (s0, s1)
-}
+use crate::helpers::separate_by_blank;
 
 fn compute_result(matrix: &Matrix) -> i64 {
     let mut result = 0;
@@ -162,7 +144,7 @@ fn process_commands2(maze: &mut Maze, commands: &str) -> () {
 #[allow(dead_code)]
 pub(crate) fn dec15() {
     let lines = read_lines("dec15.in.txt").expect("Could not load input.");
-    let (lines0, lines1) = separate(lines);
+    let (lines0, lines1) = separate_by_blank(&lines);
     let matrix = read_matrix_from_lines(lines0).unwrap();
     let mut maze = make_maze(matrix, '@');
     let commands = lines1.join("").replace("\n", "");
@@ -184,7 +166,7 @@ fn enlarge(matrix: Matrix) -> Matrix {
 #[allow(dead_code)]
 pub(crate) fn dec15_2() {
     let lines = read_lines("dec15.in.txt").expect("Could not load input.");
-    let (lines0, lines1) = separate(lines);
+    let (lines0, lines1) = separate_by_blank(&lines);
     let matrix = read_matrix_from_lines(lines0).unwrap();
     let bigmatrix = enlarge(matrix);
     let mut maze = make_maze(bigmatrix, '@');
