@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fs::read_to_string;
 use std::{fmt, ops};
 use std::any::type_name;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::str::FromStr;
 use itertools::Itertools;
@@ -298,3 +298,40 @@ pub fn separate_by_blank(lines: &Vec<String>) -> (Vec<String>, Vec<String>) {
     (s0, s1)
 }
 
+pub fn find_points(matrix: &mut Matrix, fill: Option<char>, marks: &HashSet<char>) -> HashMap<char, Vec<Vec2>> {
+    let mut result: HashMap<char, Vec<Vec2>> = HashMap::new();
+    for (row_idx, row) in matrix.data.iter().enumerate() {
+        for (col_idx, c) in row.chars().enumerate() {
+            if !marks.contains(&c) { continue; }
+            let pos = Vec2::new(col_idx as i32, row_idx as i32);
+            if !result.contains_key(&c) {
+                result.insert(c, Vec::new());
+            }
+            result.get_mut(&c).unwrap().push(pos);
+        }
+    }
+
+    if let Some(f) = fill {
+        for (c, positions) in result.iter() {
+            for pos in positions {
+                matrix.put(*pos, f);
+            }
+        }
+    }
+    result
+}
+
+pub fn find_single_points(matrix: &mut Matrix, fill: Option<char>, marks: &HashSet<char>, all: bool) -> HashMap<char, Vec2> {
+    let pre_result = find_points(matrix, fill, marks);
+    if all && (pre_result.len() != marks.len()) {
+        panic!("Expected all {:?}, but found only: {:?}", marks, pre_result);
+    }
+    let mut result: HashMap<char, Vec2> = HashMap::new();
+    for (c, positions) in pre_result {
+        if positions.len() != 1 {
+            panic!("Expected exactly one {:?}, but found {:?}", c, positions);
+        }
+        result.insert(c, positions[0]);
+    }
+    result
+}

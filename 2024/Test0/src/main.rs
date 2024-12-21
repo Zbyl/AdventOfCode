@@ -21,7 +21,8 @@ mod dec16;
 mod dec17;
 mod dec18;
 mod dec19;
+mod dec20;
 
 fn main() {
-    dec19::dec19_2()
+    dec20::dec20_2()
 }
