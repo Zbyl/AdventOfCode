@@ -245,8 +245,9 @@ fn simulate_basic(pos: Vec2, input: char, pos_to_out: &HashMap<Vec2, char>) -> O
 }
 
 type State = Vec<(Vec2, bool)>;  // (Current pos, is door) (x N), output
+type LastInputsState = Vec<Vec<char>>;
 
-fn simulate(states: &State, input: char) -> Option<(State, Option<char>)> {
+fn simulate(states: &State, last_inputs: &LastInputsState, input: char) -> Option<(State, Option<char>, LastInputsState)> {
     let door_pos_to_out = hashmap! {
         Vec2::new(0, 0) => '7',
         Vec2::new(1, 0) => '8',
@@ -275,7 +276,28 @@ fn simulate(states: &State, input: char) -> Option<(State, Option<char>)> {
 
     let mut new_states = states.clone();
     let mut cur_input = input;
+    let mut out_inputs = last_inputs.clone();
     for (idx, (pos, is_door)) in states.iter().enumerate() {
+        /*
+        let out_in = out_inputs.get_mut(idx).unwrap();
+        if cur_input == 'A' {
+            out_in.clear();
+        } else {
+            if (out_in.len() >= 2) {
+                let &last = out_in.last().unwrap();
+                if cur_input != last {
+                    let &first = out_in.first().unwrap();
+                    let all_equal = out_in.iter().all(|&item| item == first);
+                    if !all_equal {
+                        println!("Backtracking due to {} not good ext of {:?}", cur_input, out_in);
+                        return None; // Backtracking in this bot, so don't allow this path.
+                    }
+                }
+            }
+            out_in.push(cur_input);
+        }
+        */
+
         let basic_res = simulate_basic(*pos, cur_input, if *is_door { &door_pos_to_out } else { &bot_pos_to_out });
         if basic_res.is_none() {
             return None;
@@ -283,13 +305,13 @@ fn simulate(states: &State, input: char) -> Option<(State, Option<char>)> {
         let (new_pos, new_out) = basic_res.unwrap();
         new_states[idx] = (new_pos, *is_door);
         if new_out.is_none() {
-            return Some((new_states, None));
+            return Some((new_states, None, out_inputs));
         }
 
         cur_input = new_out.unwrap();
     }
 
-    Some((new_states, Some(cur_input)))
+    Some((new_states, Some(cur_input), out_inputs))
 }
 
 fn zero_state() -> State {
@@ -308,49 +330,59 @@ fn zero_state_max(dir_keypads: i32) -> State {
 fn simulate_input(input: &str) -> Option<String> {
     let mut states = zero_state();
     let mut output = Vec::new();
+    let last_inputs: LastInputsState = vec![Vec::new(); states.len()];
     for c in input.chars() {
-        let new_state = simulate(&states, c);
+        let new_state = simulate(&states, &last_inputs, c);
         //println!("{} -> {:?}", c, new_state);
         if new_state.is_none() { return None; }
-        let (new_states, out) = new_state.unwrap();
+        let (new_states, out, out_inputs) = new_state.unwrap();
         states = new_states;
         if out.is_some() { output.push(out.unwrap()); }
     }
     Some(output.into_iter().collect())
 }
 
-type OutState = (String, State, String); // Path, State, Output.
+type OutState = (String, State, LastInputsState, String); // Path, State, Inputs for pad since A, Output.
 
 fn simulate_bfs(desired_output: &str, zero: &State) -> Option<String> {
     let mut queue: VecDeque<OutState> = VecDeque::new();
-    queue.push_back(("".to_string(), zero.clone(), "".to_string()));
+    queue.push_back(("".to_string(), zero.clone(), vec![Vec::new(); zero.len()], "".to_string()));
     let mut visited: HashSet<(State, String)> = HashSet::new();
     visited.insert((zero.clone(), "".to_string()));
 
     let mut found_len = 0;
 
+    let mut counter = 1;
+
     loop {
         if queue.is_empty() { return None; }
-        let (path, states, output) = queue.pop_front().unwrap();
-        //println!("path: {path:?} output: {output:?}");
-        if output == desired_output { return Some(path); }
+        let (path, states, last_inputs, output) = queue.pop_front().unwrap();
+        println!("path: {path:?} output: {output:?}");
+        if output == desired_output {
+            println!("Number of nodes visited: {}", counter);
+            println!("Number of nodes visited2: {}", visited.len());
+            return Some(path);
+        }
         if output.len() < found_len { continue; }
 
         for c in ['<', '>', '^', 'v', 'A'] {
-            let new_state = simulate(&states, c);
+            let new_state = simulate(&states, &last_inputs, c);
             if new_state.is_none() { continue; }
-            let (new_states, out) = new_state.unwrap();
+            let (new_states, out, out_inputs) = new_state.unwrap();
             let new_output = if let Some(out) = out { output.clone() + &out.to_string() } else { output.clone() };
+
+            let vis_key = (new_states.clone(), new_output.clone());
+            if visited.contains(&vis_key) { continue; }
+            visited.insert(vis_key);
 
             if !desired_output.starts_with(new_output.as_str()) {
                 continue;
             }
             found_len = cmp::max(found_len, new_output.len());
+            if new_output.len() < found_len { continue; }
 
-            let vis_key = (new_states.clone(), new_output.clone());
-            if visited.contains(&vis_key) { continue; }
-            queue.push_back((path.clone() + &c.to_string(), new_states, new_output));
-            visited.insert(vis_key);
+            queue.push_back((path.clone() + &c.to_string(), new_states, out_inputs, new_output));
+            counter += 1;
         }
     }
 }
@@ -370,6 +402,7 @@ fn compute2(lines: &Vec<String>, zero: &State) -> i64 {
     for line in lines {
         let res = compute_one2(line, zero);
         result += res;
+        //break;
     }
     result
 }
@@ -381,7 +414,7 @@ pub(crate) fn dec21() {
     //let result = simulate_bfs("029A");
     //println!("{:?}", result);
 
-    let result = compute2(&lines, &zero_state_max(10));
+    let result = compute2(&lines, &zero_state_max(2));
     println!("{:?}", result);
     /*
     for line in lines {
