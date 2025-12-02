@@ -27,7 +27,8 @@ mod dec22;
 mod dec23;
 mod dec24;
 mod dec25;
+mod playground;
 
 fn main() {
-    dec25::dec25()
+    playground::play()
 }

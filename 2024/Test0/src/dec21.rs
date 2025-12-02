@@ -318,12 +318,14 @@ fn zero_state() -> State {
     vec![(Vec2::new(2, 0), false), (Vec2::new(2, 0), false), (Vec2::new(2, 3), true)]
 }
 
-fn zero_state_max(dir_keypads: i32) -> State {
+fn zero_state_max(dir_keypads: i32, numeric: bool) -> State {
     let mut result = Vec::new();
     for i in 0..dir_keypads {
         result.push((Vec2::new(2, 0), false));
     }
-    result.push((Vec2::new(2, 3), true));
+    if numeric {
+        result.push((Vec2::new(2, 3), true));
+    }
     result
 }
 
@@ -366,7 +368,7 @@ fn simulate_bfs(desired_output: &str, zero: &State) -> Option<String> {
         if output.len() < found_len { continue; }
 
         for c in ['<', '>', '^', 'v', 'A'] {
-            let new_state = simulate(&states, &last_inputs, c);
+                let new_state = simulate(&states, &last_inputs, c);
             if new_state.is_none() { continue; }
             let (new_states, out, out_inputs) = new_state.unwrap();
             let new_output = if let Some(out) = out { output.clone() + &out.to_string() } else { output.clone() };
@@ -409,12 +411,12 @@ fn compute2(lines: &Vec<String>, zero: &State) -> i64 {
 
 #[allow(dead_code)]
 pub(crate) fn dec21() {
-    let lines = read_lines("dec21.in.txt").expect("Could not load input.");
+    let lines = read_lines("dec21.xx.txt").expect("Could not load input.");
 
+    let result = simulate_bfs(&lines[0], &zero_state_max(2, false)).expect(format!("Could not produce desired code.").as_str());
     //let result = simulate_bfs("029A");
-    //println!("{:?}", result);
 
-    let result = compute2(&lines, &zero_state_max(2));
+    //let result = compute2(&lines, &zero_state_max(2, true)); // day 1
     println!("{:?}", result);
     /*
     for line in lines {
