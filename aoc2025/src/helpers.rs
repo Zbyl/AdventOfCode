@@ -219,9 +219,23 @@ impl Matrix {
         Some(self.data[pos.y as usize].as_bytes()[pos.x as usize].into())
     }
 
+    pub(crate) fn get_row(&self, row_idx: i32) -> Option<&str> {
+        if !self.contains_row(row_idx) {
+            return None;
+        }
+        Some(self.data[row_idx as usize].as_str())
+    }
+
     pub(crate) fn get_int(&self, pos: Vec2) -> Option<i32> {
         if let Some(c) = self.get(pos) {
             return Some(c.to_digit(10).unwrap() as i32);
+        }
+        None
+    }
+
+    pub(crate) fn get_int_row(&self, row_idx: i32) -> Option<Vec<i32>> {
+        if let Some(line) = self.get_row(row_idx) {
+            return Some(line.chars().map(|c| c.to_digit(10).unwrap() as i32).collect_vec());
         }
         None
     }
@@ -236,6 +250,12 @@ impl Matrix {
     pub(crate) fn contains(&self, pos: Vec2) -> bool {
         if pos.x < 0 || pos.y < 0 { return false; }
         if pos.x >= (self.width as i32) || pos.y >= (self.height as i32) { return false; }
+        true
+    }
+
+    pub(crate) fn contains_row(&self, row_idx: i32) -> bool {
+        if row_idx < 0 { return false; }
+        if row_idx >= (self.height as i32) { return false; }
         true
     }
 
@@ -283,6 +303,7 @@ pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
 }
 
 #[allow(dead_code)]
+/// Separates input lines into two lists. Break is on first blank line.
 pub fn separate_by_blank(lines: &Vec<String>) -> (Vec<String>, Vec<String>) {
     let mut s0: Vec<String> = Vec::new();
     let mut s1: Vec<String> = Vec::new();
