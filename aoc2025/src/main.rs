@@ -2,9 +2,14 @@
 extern crate maplit;
 
 mod helpers;
-mod find_union;
+mod basic_parsing;
+mod vec2;
+mod matrix;
 mod maze;
+mod find_union;
+
 mod playground;
+
 mod dec1;
 mod dec2;
 mod dec3;

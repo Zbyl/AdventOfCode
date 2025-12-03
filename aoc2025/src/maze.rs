@@ -1,4 +1,5 @@
-use crate::helpers::{print_matrix, Matrix, Vec2};
+use crate::matrix::{print_matrix, Matrix};
+use crate::vec2::Vec2;
 
 #[derive(Debug)]
 pub struct Maze {

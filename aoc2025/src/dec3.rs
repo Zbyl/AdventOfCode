@@ -1,4 +1,5 @@
-use crate::helpers::{read_lines, read_matrix_from_lines, Matrix};
+use crate::basic_parsing::read_lines;
+use crate::matrix::{read_matrix_from_lines, Matrix};
 
 #[allow(dead_code)]
 fn bank_voltage(bank: &Vec<i32>) -> i32 {
