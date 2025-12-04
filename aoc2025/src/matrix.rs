@@ -137,6 +137,8 @@ pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
     }
 }
 
+/// Collects locations of all points from 'marks'.
+/// Optionally fills the found spots with provided 'fill' character.
 #[allow(dead_code)]
 pub fn find_points(matrix: &mut Matrix, fill: Option<char>, marks: &HashSet<char>) -> HashMap<char, Vec<Vec2>> {
     let mut result: HashMap<char, Vec<Vec2>> = HashMap::new();
@@ -161,6 +163,9 @@ pub fn find_points(matrix: &mut Matrix, fill: Option<char>, marks: &HashSet<char
     result
 }
 
+/// Collects locations of all points from 'marks'.
+/// Expects there to be at most one of each point type (exactly one if 'all' is true).
+/// Optionally fills the found spots with provided 'fill' character.
 #[allow(dead_code)]
 pub fn find_single_points(matrix: &mut Matrix, fill: Option<char>, marks: &HashSet<char>, all: bool) -> HashMap<char, Vec2> {
     let pre_result = find_points(matrix, fill, marks);
