@@ -138,6 +138,7 @@ pub fn print_matrix(matrix: &Matrix, overrides: &HashMap<Vec2, char>) -> () {
 }
 
 /// Collects locations of all points from 'marks'.
+/// Points in each Vec are in order top-to-bottom, left-to-right (0,0 is top-left).
 /// Optionally fills the found spots with provided 'fill' character.
 #[allow(dead_code)]
 pub fn find_points(matrix: &mut Matrix, fill: Option<char>, marks: &HashSet<char>) -> HashMap<char, Vec<Vec2>> {
