@@ -21,10 +21,10 @@ pub fn make_maze(mut matrix: Matrix, start_char: char) -> Maze {
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 pub enum Direction {
-    Up,
-    Right,
-    Down,
-    Left,
+    Up,         // Towards smaller y.
+    Right,      // Towards larger x.
+    Down,       // Towards larger y.
+    Left,       // Towards smaller x.
 }
 
 #[allow(dead_code)]
