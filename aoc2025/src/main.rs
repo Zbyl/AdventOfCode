@@ -19,8 +19,9 @@ mod dec6;
 mod dec7;
 mod dec8;
 mod dec9;
+mod dec10;
 
 fn main() {
     //playground::play();
-    dec9::dec9_2();
+    dec10::dec10_2();
 }
