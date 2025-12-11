@@ -20,8 +20,9 @@ mod dec7;
 mod dec8;
 mod dec9;
 mod dec10;
+mod dec11;
 
 fn main() {
     //playground::play();
-    dec10::dec10_2();
+    dec11::dec11_2();
 }

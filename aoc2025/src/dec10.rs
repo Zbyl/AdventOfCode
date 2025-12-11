@@ -94,6 +94,7 @@ fn solve_task(inputs: &Vec<Input>) -> i64 {
     return result;
 }
 
+#[allow(dead_code)]
 fn solve_machine2(machine: &Input) -> i64 {
     let num_counters = machine.joltages.len();
 
